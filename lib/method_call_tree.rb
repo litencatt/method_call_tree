@@ -13,6 +13,7 @@ class MethodCallTree
   def initialize(options)
     @args = options[:args]
     @class = options[:class]
+    @level = options[:level]
     @tree = {}
     @queue = []
 
@@ -67,7 +68,9 @@ class MethodCallTree
     @queue << "#{parent.gsub(/_\d+$/, '')}\n"
 
     while node = tree.shift
-      @queue << get_line(end_line: tree.empty?, space: space)
+      line = get_line(end_line: tree.empty?, space: space)
+      break if line.size / SPACE_SIZE == @level - 1
+      @queue << line
       walk(*node, space + get_space(end_line: tree.empty?))
     end
   end
